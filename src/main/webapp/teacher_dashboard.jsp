@@ -22,32 +22,40 @@
             background-color: #f4f4f9;
             margin: 0;
             padding: 0;
+            display: flex;
         }
 
         header {
-            background-color: #4CAF50;
+            background-color: #05064a;
             color: white;
             padding: 15px;
             text-align: center;
+            width: 200px;
         }
 
         h2 {
             margin-top: 0;
         }
 
-        a {
-            color: #4CAF50;
+
+        .sidebar a {
+            color: white;
             text-decoration: none;
-            font-weight: bold;
+            display: block;
+            padding: 10px 20px;
+            font-size: 18px;
         }
 
-        a:hover {
-            text-decoration: underline;
+        .sidebar a:hover {
+            background-color: #0056b3;
         }
 
-        .container {
-            width: 80%;
-            margin: 20px auto;
+        .main-content {
+            margin-left: 220px; /* Adjust to match sidebar width */
+            padding: 20px;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
         }
 
         h3 {
@@ -76,7 +84,7 @@
         }
 
         form button {
-            background-color: #4CAF50;
+            background-color: #05064a;
             color: white;
             padding: 10px 20px;
             border: none;
@@ -86,7 +94,7 @@
         }
 
         form button:hover {
-            background-color: #45a049;
+            background-color: #05064a;
         }
 
         table {
@@ -105,7 +113,7 @@
         }
 
         th {
-            background-color: #f4f4f4;
+            background-color: #05064a;
         }
 
         tr:nth-child(even) {
@@ -113,7 +121,7 @@
         }
 
         .submission-file {
-            color: #4CAF50;
+            color: #007bff;
             text-decoration: none;
         }
 
@@ -146,87 +154,93 @@
     <a class="logout-link" href="logout">Logout</a>
 </header>
 
-<div class="container">
-    <h3>Create New Assignment</h3>
-    <form action="TeacherServlet" method="post">
-        <label for="title">Assignment Title:</label><br>
-        <input type="text" id="title" name="title" required><br><br>
+<div class="main-content">
+    <div id="create-assignment">
+        <h3>Create New Assignment</h3>
+        <form action="TeacherServlet" method="post">
+            <label for="title">Assignment Title:</label><br>
+            <input type="text" id="title" name="title" required><br><br>
 
-        <label for="description">Description:</label><br>
-        <textarea id="description" name="description"></textarea><br><br>
+            <label for="description">Description:</label><br>
+            <textarea id="description" name="description"></textarea><br><br>
 
-        <label for="courseId">Select Course:</label><br>
-        <select id="courseId" name="courseId">
-            <c:forEach var="course" items="${courses}">
-                <option value="${course.id}">${course.name}</option>
-            </c:forEach>
-        </select><br><br>
+            <label for="courseId">Select Course:</label><br>
+            <select id="courseId" name="courseId">
+                <c:forEach var="course" items="${courses}">
+                    <option value="${course.id}">${course.name}</option>
+                </c:forEach>
+            </select><br><br>
 
-        <label for="deadline">Deadline:</label><br>
-        <input type="datetime-local" id="deadline" name="deadline" required><br><br>
+            <label for="deadline">Deadline:</label><br>
+            <input type="datetime-local" id="deadline" name="deadline" required><br><br>
 
-        <button type="submit">Create Assignment</button>
-    </form>
+            <button type="submit">Create Assignment</button>
+        </form>
+    </div>
 
-    <h3>Manage Assignments</h3>
-    <ul>
+    <div id="manage-assignments">
+        <h3>Manage Assignments</h3>
+        <ul>
+            <c:if test="${not empty assignments}">
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>TITLE</th>
+                        <th>DESCRIPTION</th>
+                        <th>COURSE</th>
+                        <th>DEADLINE</th>
+                    </tr>
+                    <c:forEach var="assignment" items="${assignments}">
+                        <tr>
+                            <td><c:out value="${assignment.id}"/></td>
+                            <td><c:out value="${assignment.title}"/></td>
+                            <td><c:out value="${assignment.description}"/></td>
+                            <td>
+                                <c:forEach var="course" items="${courses}">
+                                    <c:if test="${course.id == assignment.course.id}">
+                                        <c:out value="${course.name}"/>
+                                    </c:if>
+                                </c:forEach>
+                            </td>
+                            <td><c:out value="${assignment.deadline}"/></td>
+                        </tr>
+                    </c:forEach>
+                </table>
+            </c:if>
+            <c:if test="${empty assignments}">
+                <li class="empty-message">No assignments created yet.</li>
+            </c:if>
+        </ul>
+    </div>
+
+    <div id="manage-submissions">
+        <h3>Manage Submissions</h3>
         <c:if test="${not empty assignments}">
             <table>
                 <tr>
-                    <th>ID</th>
-                    <th>TITLE</th>
-                    <th>DESCRIPTION</th>
-                    <th>COURSE</th>
-                    <th>DEADLINE</th>
+                    <th>Assignment ID</th>
+                    <th>Student Username</th>
+                    <th>Submission Time</th>
+                    <th>File</th>
                 </tr>
                 <c:forEach var="assignment" items="${assignments}">
-                    <tr>
-                        <td><c:out value="${assignment.id}"/></td>
-                        <td><c:out value="${assignment.title}"/></td>
-                        <td><c:out value="${assignment.description}"/></td>
-                        <td>
-                            <c:forEach var="course" items="${courses}">
-                                <c:if test="${course.id == assignment.course.id}">
-                                    <c:out value="${course.name}"/>
-                                </c:if>
-                            </c:forEach>
-                        </td>
-                        <td><c:out value="${assignment.deadline}"/></td>
-                    </tr>
+                    <c:forEach var="submission" items="${submissions}">
+                        <c:if test="${submission.assignment.id == assignment.id}">
+                            <tr>
+                                <td><c:out value="${assignment.id}"/></td>
+                                <td><c:out value="${submission.student.username}"/></td>
+                                <td><c:out value="${submission.submissionTime}"/></td>
+                                <td><a class="submission-file" href="${submission.filePath}" target="_blank">View File</a></td>
+                            </tr>
+                        </c:if>
+                    </c:forEach>
                 </c:forEach>
             </table>
         </c:if>
-        <c:if test="${empty assignments}">
-            <li class="empty-message">No assignments created yet.</li>
+        <c:if test="${empty submissions}">
+            <li class="empty-message">No submissions available.</li>
         </c:if>
-    </ul>
-
-    <h3>Manage Submissions</h3>
-    <c:if test="${not empty assignments}">
-        <table>
-            <tr>
-                <th>Assignment ID</th>
-                <th>Student Username</th>
-                <th>Submission Time</th>
-                <th>File</th>
-            </tr>
-            <c:forEach var="assignment" items="${assignments}">
-                <c:forEach var="submission" items="${submissions}">
-                    <c:if test="${submission.assignment.id == assignment.id}">
-                        <tr>
-                            <td><c:out value="${assignment.id}"/></td>
-                            <td><c:out value="${submission.student.username}"/></td>
-                            <td><c:out value="${submission.submissionTime}"/></td>
-                            <td><a class="submission-file" href="${submission.filePath}" target="_blank">View File</a></td>
-                        </tr>
-                    </c:if>
-                </c:forEach>
-            </c:forEach>
-        </table>
-    </c:if>
-    <c:if test="${empty submissions}">
-        <li class="empty-message">No submissions available.</li>
-    </c:if>
+    </div>
 </div>
 
 </body>
