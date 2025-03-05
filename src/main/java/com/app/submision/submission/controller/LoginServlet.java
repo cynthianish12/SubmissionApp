@@ -35,6 +35,28 @@ public class LoginServlet extends HttpServlet {
         User user = null;
         try {
             user = query.uniqueResult();
+
+            // Check if the user is the first admin (if no admin exists)
+            if (user == null) {
+                // Check if the admin user exists
+                Query<User> adminQuery = session.createQuery("FROM User WHERE role = :role", User.class);
+                adminQuery.setParameter("role", Role.ADMIN);
+                user = adminQuery.uniqueResult();
+
+                if (user == null) {
+                    // If no admin exists, create one
+                    user = new User();
+                    user.setUsername("admin");  // Set default username for admin
+                    user.setPassword("admin123"); // Set default password for admin
+                    user.setRole(Role.ADMIN);  // Set role as ADMIN
+
+                    // Save the new admin to the database
+                    session.beginTransaction();
+                    session.save(user);
+                    session.getTransaction().commit();
+                    System.out.println("Default admin created.");
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -57,7 +79,7 @@ public class LoginServlet extends HttpServlet {
                 // Redirect to teacher-specific page (e.g., teacher_dashboard.jsp for teachers)
                 response.sendRedirect("TeacherServlet");
             } else if (user.getRole().compareTo(Role.valueOf("ADMIN")) == 0) {
-                // Redirect to teacher-specific page (e.g., teacher_dashboard.jsp for teachers)
+                // Redirect to admin-specific page (e.g., admin_dashboard.jsp for admins)
                 response.sendRedirect("AdminServlet");
             } else {
                 // In case the role is not recognized

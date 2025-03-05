@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard</title>
     <style>
-        /* Basic styling for the page */
+        /* Basic s tyling for the page */
         body {
             font-family: Arial, sans-serif;
             display: flex;
