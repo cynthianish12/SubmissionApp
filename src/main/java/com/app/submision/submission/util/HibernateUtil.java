@@ -1,5 +1,4 @@
 package com.app.submision.submission.util;
-
 import com.app.submision.submission.model.User;
 import com.app.submision.submission.model.Course;
 import com.app.submision.submission.model.Assignment;
@@ -23,9 +22,9 @@ public class HibernateUtil {
 
             // PostgreSQL Configuration
             settings.put(Environment.DRIVER, "org.postgresql.Driver");
-            settings.put(Environment.URL, "jdbc:postgresql://localhost:5432/submit");
+            settings.put(Environment.URL, "jdbc:postgresql://localhost:5432/me");
             settings.put(Environment.USER, "postgres");
-            settings.put(Environment.PASS, "@Gena2025!");
+            settings.put(Environment.PASS, "me");
             settings.put(Environment.DIALECT, "org.hibernate.dialect.PostgreSQLDialect");
 
             // Show SQL in console

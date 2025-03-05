@@ -171,6 +171,13 @@
                 </c:forEach>
             </select><br><br>
 
+            <label for="forStudent">Assign To (Student):</label><br>
+            <select id="forStudent" name="forStudent">
+                <c:forEach var="student" items="${students}">
+                    <option value="${student.username}">${student.username}</option>
+                </c:forEach>
+            </select><br><br>
+
             <label for="deadline">Deadline:</label><br>
             <input type="datetime-local" id="deadline" name="deadline" required><br><br>
 
