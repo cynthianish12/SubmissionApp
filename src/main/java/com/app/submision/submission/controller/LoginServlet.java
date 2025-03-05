@@ -8,18 +8,18 @@ import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
+
 import jakarta.servlet.http.*;
 import java.io.IOException;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 public class LoginServlet extends HttpServlet {
 
-    // Handle GET request to display login page
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/login.jsp").forward(request, response); // Forward to login.jsp
+        request.getRequestDispatcher("/login.jsp").forward(request, response);
     }
 
-    // Handle POST request to process login form
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Retrieve the username and password from the login form
         String username = request.getParameter("username");
@@ -28,9 +28,8 @@ public class LoginServlet extends HttpServlet {
         // Open Hibernate session and check the user credentials
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
-        Query<User> query = session.createQuery("FROM User WHERE username = :username AND password = :password", User.class);
+        Query<User> query = session.createQuery("FROM User WHERE username = :username", User.class);
         query.setParameter("username", username);
-        query.setParameter("password", password);
 
         User user = null;
         try {
@@ -41,27 +40,28 @@ public class LoginServlet extends HttpServlet {
             session.close();
         }
 
-        // If user is found, store the user in the session and redirect to the appropriate page
         if (user != null) {
-            HttpSession httpSession = request.getSession();
-            httpSession.setAttribute("user", user);
+            // Check if the entered password matches the hashed password in the database
+            if (BCrypt.checkpw(password, user.getPassword())) {
+                HttpSession httpSession = request.getSession();
+                httpSession.setAttribute("user", user);
 
-            // Print the user's role for troubleshooting
-            System.out.println("Logged in user role: " + user.getRole());
+                // Print the user's role for troubleshooting
+                System.out.println("Logged in user role: " + user.getRole());
 
-            // Check the user's role and redirect to the appropriate page
-            if (user.getRole().compareTo(Role.valueOf("STUDENT")) == 0){
-                // Redirect to student-specific page (e.g., student_home.jsp for students)
-                response.sendRedirect("StudentServlet");
-            } else if (user.getRole().compareTo(Role.valueOf("TEACHER")) == 0) {
-                // Redirect to teacher-specific page (e.g., teacher_dashboard.jsp for teachers)
-                response.sendRedirect("TeacherServlet");
-            } else if (user.getRole().compareTo(Role.valueOf("ADMIN")) == 0) {
-                // Redirect to teacher-specific page (e.g., teacher_dashboard.jsp for teachers)
-                response.sendRedirect("AdminServlet");
+                // Check the user's role and redirect to the appropriate page
+                if (user.getRole().compareTo(Role.valueOf("STUDENT")) == 0){
+                    response.sendRedirect("StudentServlet");
+                } else if (user.getRole().compareTo(Role.valueOf("TEACHER")) == 0) {
+                    response.sendRedirect("TeacherServlet");
+                } else if (user.getRole().compareTo(Role.valueOf("ADMIN")) == 0) {
+                    response.sendRedirect("AdminServlet");
+                } else {
+                    response.sendRedirect("login.jsp?error=invalid_role");
+                }
             } else {
-                // In case the role is not recognized
-                response.sendRedirect("login.jsp?error=invalid_role");
+                // If the password doesn't match, redirect to login page with error
+                response.sendRedirect("login.jsp?error=invalid_credentials");
             }
         } else {
             // If user is not found, redirect to login page with error

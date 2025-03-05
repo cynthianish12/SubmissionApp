@@ -2,6 +2,8 @@ package com.app.submision.submission.model;
 
 
 import javax.persistence.*;
+import org.mindrot.jbcrypt.BCrypt;
+
 
 @Entity
 @Table(name = "users")
@@ -42,16 +44,20 @@ public class User {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public Role getRole() {
         return role;
     }
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public void setPassword(String password) {
+        this.password = hashPassword(password);
+    }
+
+    private String hashPassword(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt(12));
     }
 }
 
