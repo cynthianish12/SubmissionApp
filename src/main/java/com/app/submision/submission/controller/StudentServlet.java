@@ -1,6 +1,7 @@
 package com.app.submision.submission.controller;
 
 import com.app.submision.submission.model.Assignment;
+import com.app.submision.submission.model.Classroom;
 import com.app.submision.submission.model.Submission;
 import com.app.submision.submission.model.User;
 import com.app.submision.submission.util.HibernateUtil;
@@ -80,7 +81,7 @@ public class StudentServlet extends HttpServlet {
             return;
         }
 
-
+        Classroom classroom = (Classroom) session.getAttribute("classroom");
         String assignmentId = request.getParameter("assignment");
         String studentId = request.getParameter("studentId");
 
@@ -89,11 +90,10 @@ public class StudentServlet extends HttpServlet {
         String fileName = getFileName(filePart);
 
 
-        if (assignmentId != null && studentId != null && filePart != null) {
+        if (assignmentId != null && classroom != null &&studentId != null && filePart != null) {
             // Save the file on the server
             String filePath = saveFile(filePart, fileName);
 
-            // Save the submission record to the database
             try (Session hibernateSession = HibernateUtil.getSessionFactory().openSession()) {
                 hibernateSession.beginTransaction();
 
@@ -106,6 +106,7 @@ public class StudentServlet extends HttpServlet {
                     submission.setAssignment(assignment);
                     submission.setStudent(student);
                     submission.setFilePath(filePath);
+                    submission.setClassroom(classroom);
                     submission.setSubmissionTime(LocalDateTime.now());
 
                     try {
@@ -132,7 +133,6 @@ public class StudentServlet extends HttpServlet {
         }
     }
 
-    // Utility method to get the file name from the Part object
     private String getFileName(Part part) {
         String contentDisposition = part.getHeader("Content-Disposition");
         for (String cd : contentDisposition.split(";")) {
@@ -143,7 +143,6 @@ public class StudentServlet extends HttpServlet {
         return null;
     }
 
-    // Utility method to save the file to a specific path on the server
     private String saveFile(Part filePart, String fileName) throws IOException {
         String uploadDir = getServletContext().getRealPath("/uploads");
         File uploadDirectory = new File(uploadDir);

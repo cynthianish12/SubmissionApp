@@ -12,7 +12,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private Classroom classRoom;
+    private Classroom classroom;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -53,12 +53,12 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
     }
-    public Classroom getClassRoom() {
-        return classRoom;
+    public Classroom getClassroom() {
+        return classroom;
     }
 
-    public void setClassRoom(Classroom classRoom) {
-        this.classRoom = classRoom;
+    public void setClassroom(Classroom classRoom) {
+        this.classroom = classRoom;
     }
 
     public void setPassword(String password) {
@@ -68,5 +68,6 @@ public class User {
     private String hashPassword(String password) {
         return BCrypt.hashpw(password, BCrypt.gensalt(12));
     }
+
 }
 

@@ -8,7 +8,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 
 import jakarta.servlet.ServletException;
-
 import jakarta.servlet.http.*;
 import java.io.IOException;
 
@@ -48,6 +47,12 @@ public class LoginServlet extends HttpServlet {
 
                 // Print the user's role for troubleshooting
                 System.out.println("Logged in user role: " + user.getRole());
+
+                // Store classroom only if the user is a student
+                if (user.getRole().compareTo(Role.valueOf("STUDENT")) == 0) {
+                    httpSession.setAttribute("classroom", user.getClassroom());
+                    System.out.println("Student's classroom: " + user.getClassroom()); // Debugging
+                }
 
                 // Check the user's role and redirect to the appropriate page
                 if (user.getRole().compareTo(Role.valueOf("STUDENT")) == 0){
