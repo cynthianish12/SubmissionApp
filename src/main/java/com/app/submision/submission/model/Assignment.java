@@ -1,12 +1,12 @@
 package com.app.submision.submission.model;
 
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "assignments")
 public class Assignment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -22,11 +22,15 @@ public class Assignment {
 
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
-    private Course course;
+    private Course course;  // Linking assignment to a course
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Classroom classroom;  // Using enum to specify the class (Classroom enum)
 
     @ManyToOne
     @JoinColumn(name = "instructor_id", nullable = false)
-    private User instructor;
+    private User instructor;  // Linking assignment to an instructor
 
     // Getter and Setter methods
 
@@ -70,16 +74,24 @@ public class Assignment {
         this.course = course;
     }
 
+    public Classroom getClassroom() {
+        return classroom;
+    }
+
+    public void setClassroom(Classroom classroom) {
+        this.classroom = classroom;
+    }
+
     public User getInstructor() {
         return instructor;
     }
 
-
     public void setInstructor(User instructor) {
         this.instructor = instructor;
     }
+
     // New method to get the subject from the course
     public String getSubject() {
-        return course != null ? course.getDescription() : null;  // Assuming getSubject() is a method in the Course class
+        return course != null ? course.getDescription() : null;  // Assuming getDescription() is a method in the Course class
     }
 }

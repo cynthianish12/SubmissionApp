@@ -40,6 +40,8 @@ public class Submission {
         return assignment;
     }
 
+   private Classroom classroom;
+
     public void setAssignment(Assignment assignment) {
         this.assignment = assignment;
     }
@@ -66,5 +68,13 @@ public class Submission {
 
     public void setSubmissionTime(LocalDateTime submissionTime) {
         this.submissionTime = submissionTime;
+    }
+
+    public Classroom getClassroom() {
+        return classroom;
+    }
+
+    public void setClassroom(Classroom classroom) {
+        this.classroom = classroom;
     }
 }

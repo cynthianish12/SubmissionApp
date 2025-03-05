@@ -12,6 +12,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    private Classroom classRoom;
+
     @Column(nullable = false, unique = true)
     private String username;
 
@@ -50,6 +52,13 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+    public Classroom getClassRoom() {
+        return classRoom;
+    }
+
+    public void setClassRoom(Classroom classRoom) {
+        this.classRoom = classRoom;
     }
 
     public void setPassword(String password) {

@@ -1,5 +1,6 @@
 package com.app.submision.submission.service;
 
+import com.app.submision.submission.model.Classroom;
 import com.app.submision.submission.model.Submission;
 import com.app.submision.submission.model.Assignment;
 import com.app.submision.submission.model.User;
@@ -52,6 +53,14 @@ public class SubmissionService {
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Error fetching submissions for assignment", e);
+        }
+    }
+    public List<Submission> getSubmissionsByClassroom(Classroom classroom) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery(
+                            "FROM Submission s WHERE s.classroom = :classroom", Submission.class
+                    ).setParameter("classroom", classroom)
+                    .getResultList();
         }
     }
 }

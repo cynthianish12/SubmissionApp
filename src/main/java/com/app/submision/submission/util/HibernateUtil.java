@@ -21,7 +21,6 @@ public class HibernateUtil {
             Configuration configuration = new Configuration();
             Properties settings = new Properties();
 
-            // PostgreSQL Configuration
             settings.put(Environment.DRIVER, "org.postgresql.Driver");
             settings.put(Environment.URL, "jdbc:postgresql://localhost:5432/submit");
             settings.put(Environment.USER, "postgres");
@@ -31,8 +30,8 @@ public class HibernateUtil {
             // Show SQL in console
             settings.put(Environment.SHOW_SQL, true);
 
-            // Auto-create/update schema
-            settings.put(Environment.HBM2DDL_AUTO, "update");  // 'update' to update schema automatically
+            settings.put(Environment.HBM2DDL_AUTO, "create-drop");
+
 
             // Apply settings to configuration
             configuration.setProperties(settings);
