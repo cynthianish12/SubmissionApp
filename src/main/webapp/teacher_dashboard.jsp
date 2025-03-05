@@ -37,7 +37,6 @@
             margin-top: 0;
         }
 
-
         .sidebar a {
             color: white;
             text-decoration: none;
@@ -51,7 +50,7 @@
         }
 
         .main-content {
-            margin-left: 220px; /* Adjust to match sidebar width */
+            margin-left: 220px;
             padding: 20px;
             width: 100%;
             background-color: white;
@@ -169,6 +168,21 @@
                 <c:forEach var="course" items="${courses}">
                     <option value="${course.id}">${course.name}</option>
                 </c:forEach>
+            </select><br><br>
+
+            <label for="classSelection">Assign To (Class):</label><br>
+            <select id="classSelection" name="classSelection">
+                <option value="YEAR_ONE_A">Year One A</option>
+                <option value="YEAR_ONE_B">Year One B</option>
+                <option value="YEAR_ONE_C">Year One C</option>
+                <option value="YEAR_TWO_A">Year Two A</option>
+                <option value="YEAR_TWO_B">Year Two B</option>
+                <option value="YEAR_TWO_C">Year Two C</option>
+                <option value="YEAR_TWO_D">Year Two D</option>
+                <option value="YEAR_THREE_A">Year Three A</option>
+                <option value="YEAR_THREE_B">Year Three B</option>
+                <option value="YEAR_THREE_C">Year Three C</option>
+                <option value="YEAR_THREE_D">Year Three D</option>
             </select><br><br>
 
             <label for="deadline">Deadline:</label><br>

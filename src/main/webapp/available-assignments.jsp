@@ -10,6 +10,7 @@
 </head>
 <body>
 <h2>Available Assignments</h2>
+
 <c:if test="${not empty assignments}">
     <table border="1">
         <tr>
@@ -17,6 +18,7 @@
             <th>Title</th>
             <th>Description</th>
             <th>Course</th>
+            <th>Class</th>
             <th>Deadline</th>
         </tr>
         <c:forEach var="assignment" items="${assignments}">
@@ -25,6 +27,7 @@
                 <td><c:out value="${assignment.title}"/></td>
                 <td><c:out value="${assignment.description}"/></td>
                 <td><c:out value="${assignment.course.name}"/></td>
+                <td><c:out value="${assignment.classSelection}"/></td>
                 <td><c:out value="${assignment.deadline}"/></td>
             </tr>
         </c:forEach>
