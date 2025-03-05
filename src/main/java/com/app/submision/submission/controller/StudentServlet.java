@@ -5,6 +5,7 @@ import com.app.submision.submission.model.Classroom;
 import com.app.submision.submission.model.Submission;
 import com.app.submision.submission.model.User;
 import com.app.submision.submission.util.HibernateUtil;
+import com.app.submision.submission.service.AssignmentService;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.File;
@@ -18,6 +19,8 @@ import java.util.List;
 import org.hibernate.Session;
 
 public class StudentServlet extends HttpServlet {
+    private final AssignmentService assignmentService = new AssignmentService();
+
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -35,10 +38,7 @@ public class StudentServlet extends HttpServlet {
 
         User student = (User) session.getAttribute("user");
 
-        List<Assignment> allAssignments;
-        try (Session hibernateSession = HibernateUtil.getSessionFactory().openSession()) {
-            allAssignments = hibernateSession.createQuery("FROM Assignment", Assignment.class).list();
-        }
+        List<Assignment> allAssignments = assignmentService.getAssignmentsByClassroom(classroom);
 
         List<Submission> studentSubmissions;
         try (Session hibernateSession = HibernateUtil.getSessionFactory().openSession()) {
