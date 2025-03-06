@@ -39,6 +39,7 @@
 <div class="main-content">
     <div class="content-box">
         <h2>Add New User</h2>
+        <!-- Add a form to allow the admin to add a new user -->
         <form action="AdminServlet" method="post">
             <label>Username:</label>
             <input type="text" name="username" required>
