@@ -6,6 +6,7 @@ import com.app.submision.submission.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class Program {
     public static void main(String[] args) {
@@ -23,7 +24,7 @@ public class Program {
             // Create a new user object with admin credentials
             User adminUser = new User();
             adminUser.setUsername("admin");
-            adminUser.setPassword("admin");
+            adminUser.setPassword("admin", BCrypt.gensalt());
             adminUser.setRole(Role.ADMIN); // Set role as ADMIN
 
             // Save the user to the database
