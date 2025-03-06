@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class AdminServlet extends HttpServlet {
 
@@ -100,7 +101,7 @@ public class AdminServlet extends HttpServlet {
             try {
                 User newUser = new User();
                 newUser.setUsername(username);
-                newUser.setPassword(password);  // You may want to hash the password before storing it
+                newUser.setPassword(password, BCrypt.gensalt());  // You may want to hash the password before storing it
                 newUser.setRole(role);
 
                 try (Session hibernateSession = HibernateUtil.getSessionFactory().openSession()) {
