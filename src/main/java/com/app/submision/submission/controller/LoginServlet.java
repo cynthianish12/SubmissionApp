@@ -13,6 +13,7 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import org.mindrot.jbcrypt.BCrypt;
 
+@WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 
     // Handle GET request to display login page
@@ -67,7 +68,7 @@ public class LoginServlet extends HttpServlet {
                     // If no admin exists, create one
                     user = new User();
                     user.setUsername("admin");  // Set default username for admin
-                    user.setPassword("admin123", BCrypt.gensalt()); // Set default password for admin
+                    user.setPassword("admin123"); // Set default password for admin
                     user.setRole(Role.ADMIN);  // Set role as ADMIN
 
                     // Save the new admin to the database
@@ -83,5 +84,4 @@ public class LoginServlet extends HttpServlet {
             session.close();
         }
     }
-
 }

@@ -22,9 +22,9 @@ public class HibernateUtil {
 
             // PostgreSQL Configuration
             settings.put(Environment.DRIVER, "org.postgresql.Driver");
-            settings.put(Environment.URL, "jdbc:postgresql://localhost:5432/me");
+            settings.put(Environment.URL, "jdbc:postgresql://localhost:5432/assignment");
             settings.put(Environment.USER, "postgres");
-            settings.put(Environment.PASS, "me");
+            settings.put(Environment.PASS, "nelson");
             settings.put(Environment.DIALECT, "org.hibernate.dialect.PostgreSQLDialect");
 
             // Show SQL in console

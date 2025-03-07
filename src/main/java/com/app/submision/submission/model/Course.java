@@ -1,7 +1,5 @@
 package com.app.submision.submission.model;
 
-
-
 import javax.persistence.*;
 
 @Entity
@@ -22,7 +20,6 @@ public class Course {
     private int instructorId; // Store the instructor's ID as an integer
 
     // Getters and Setters
-
     public int getId() {
         return id;
     }
