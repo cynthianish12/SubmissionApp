@@ -1,0 +1,11 @@
+.BurpSuite/
+.arduino15/
+.bash_history
+.cache/
+.config/
+.git-credentials
+.npm/
+.ssh/
+.zoom/
+*.log
+*.exe
