@@ -11,7 +11,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
+import org.mindrot.jbcrypt.BCrypt;
 
+@WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 
     // Handle GET request to display login page
@@ -28,17 +30,36 @@ public class LoginServlet extends HttpServlet {
         // Open Hibernate session and check the user credentials
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
-        Query<User> query = session.createQuery("FROM User WHERE username = :username AND password = :password", User.class);
-        query.setParameter("username", username);
-        query.setParameter("password", password);
-
         User user = null;
+
         try {
+            // Check if the user exists in the database
+            Query<User> query = session.createQuery("FROM User WHERE username = :username", User.class);
+            query.setParameter("username", username);
             user = query.uniqueResult();
+
+            // If user is found and password is correct
+            if (user != null && user.checkPassword(password)) {
+                HttpSession httpSession = request.getSession();
+                httpSession.setAttribute("user", user);
+
+                // Redirect based on the user's role
+                if (user.getRole().compareTo(Role.STUDENT) == 0) {
+                    response.sendRedirect("StudentServlet");
+                } else if (user.getRole().compareTo(Role.TEACHER) == 0) {
+                    response.sendRedirect("TeacherServlet");
+                } else if (user.getRole().compareTo(Role.ADMIN) == 0) {
+                    response.sendRedirect("AdminServlet");
+                } else {
+                    response.sendRedirect("login.jsp?error=invalid_role");
+                }
+            } else {
+                response.sendRedirect("login.jsp?error=invalid_credentials");
+            }
 
             // Check if the user is the first admin (if no admin exists)
             if (user == null) {
-                // Check if the admin user exists
+                // Check if an admin user exists
                 Query<User> adminQuery = session.createQuery("FROM User WHERE role = :role", User.class);
                 adminQuery.setParameter("role", Role.ADMIN);
                 user = adminQuery.uniqueResult();
@@ -61,33 +82,6 @@ public class LoginServlet extends HttpServlet {
             e.printStackTrace();
         } finally {
             session.close();
-        }
-
-        // If user is found, store the user in the session and redirect to the appropriate page
-        if (user != null) {
-            HttpSession httpSession = request.getSession();
-            httpSession.setAttribute("user", user);
-
-            // Print the user's role for troubleshooting
-            System.out.println("Logged in user role: " + user.getRole());
-
-            // Check the user's role and redirect to the appropriate page
-            if (user.getRole().compareTo(Role.valueOf("STUDENT")) == 0){
-                // Redirect to student-specific page (e.g., student_home.jsp for students)
-                response.sendRedirect("StudentServlet");
-            } else if (user.getRole().compareTo(Role.valueOf("TEACHER")) == 0) {
-                // Redirect to teacher-specific page (e.g., teacher_dashboard.jsp for teachers)
-                response.sendRedirect("TeacherServlet");
-            } else if (user.getRole().compareTo(Role.valueOf("ADMIN")) == 0) {
-                // Redirect to admin-specific page (e.g., admin_dashboard.jsp for admins)
-                response.sendRedirect("AdminServlet");
-            } else {
-                // In case the role is not recognized
-                response.sendRedirect("login.jsp?error=invalid_role");
-            }
-        } else {
-            // If user is not found, redirect to login page with error
-            response.sendRedirect("login.jsp?error=invalid_credentials");
         }
     }
 }
