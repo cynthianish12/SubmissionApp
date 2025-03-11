@@ -50,10 +50,8 @@ public class AdminServlet extends HttpServlet {
         String roleString = request.getParameter("role");
         String className = request.getParameter("className");
 
-        List<String> instructors = List.of("Hatangimbabazi hilaire", "habanabashaka jean damasccene", "musaninyange mahoro larisee", "mukama louis", "mwizerwa stanley", "niyigaba emmanuel");
-        List<String> classes = List.of("Y1A", "Y1B", "Y1C", "Y2A", "Y2B", "Y2C", "Y2D", "Y3A", "Y3B", "Y3C", "Y3D");
-
         if (courseName != null && courseDescription != null && instructorName != null) {
+            List<String> instructors = getInstructorByNames();
             if (!instructors.contains(instructorName)) {
                 request.setAttribute("errorMessage", "Invalid instructor name.");
                 request.getRequestDispatcher("admin_dashboard.jsp").forward(request, response);
@@ -85,7 +83,7 @@ public class AdminServlet extends HttpServlet {
 
         if (username != null && password != null && roleString != null) {
             Role role = Role.valueOf(roleString);
-            if (role == Role.STUDENT && (className == null || !classes.contains(className))) {
+            if (role == Role.STUDENT && (className == null || className.isEmpty())) {
                 request.setAttribute("errorMessage", "Invalid or missing class for student.");
                 request.getRequestDispatcher("admin_dashboard.jsp").forward(request, response);
                 return;
@@ -103,13 +101,12 @@ public class AdminServlet extends HttpServlet {
                 newUser.setRole(role);
 
                 if (role == Role.STUDENT) {
-                    // Fetch the Classroom object based on className
                     Classroom classroom = (Classroom) hibernateSession.createQuery("FROM Classroom WHERE name = :className")
                             .setParameter("className", className)
                             .uniqueResult();
 
                     if (classroom != null) {
-                        newUser.setClassroom(classroom);  // Set the Classroom object
+                        newUser.setClassroom(classroom);
                     } else {
                         request.setAttribute("errorMessage", "Classroom not found.");
                         request.getRequestDispatcher("admin_dashboard.jsp").forward(request, response);
@@ -128,12 +125,11 @@ public class AdminServlet extends HttpServlet {
         request.getRequestDispatcher("admin_dashboard.jsp").forward(request, response);
     }
 
-    private List<String> getAllInstructorNames() {
+    private List<String> getInstructorByNames() {
         try (Session hibernateSession = HibernateUtil.getSessionFactory().openSession()) {
             return hibernateSession.createQuery(
                             "SELECT username FROM User WHERE role = 'TEACHER'", String.class)
                     .getResultList();
         }
     }
-
 }
