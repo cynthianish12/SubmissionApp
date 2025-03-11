@@ -128,9 +128,12 @@ public class AdminServlet extends HttpServlet {
         request.getRequestDispatcher("admin_dashboard.jsp").forward(request, response);
     }
 
-    private User getInstructorById(int instructorId) {
+    private List<String> getAllInstructorNames() {
         try (Session hibernateSession = HibernateUtil.getSessionFactory().openSession()) {
-            return hibernateSession.get(User.class, instructorId);
+            return hibernateSession.createQuery(
+                            "SELECT username FROM User WHERE role = 'TEACHER'", String.class)
+                    .getResultList();
         }
     }
+
 }
